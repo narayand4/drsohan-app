@@ -5,16 +5,17 @@ import YouTube from 'react-native-youtube'
 
 export default class YouTubeVideo extends React.Component{
     static navigationOptions = {
-        headerTitle: 'YouTube',
+        headerTitle: 'PROF.(DR.) SOHAN RAJ TATER E-KNOWLEDGE MUSEUM',
         headerStyle: {
-            backgroundColor: '#000'
+            backgroundColor: '#fff'
         }, 
         headerTitleStyle: {
-            color: '#fff'
+            color: '#9e0472',
+            fontSize: 14.5
         }
     }
 
-    render() {
+    render() { 
         return (
           <View style={styles.container}>
             <YouTube
@@ -22,7 +23,7 @@ export default class YouTubeVideo extends React.Component{
                 play={true}             
                 fullscreen={true}       
                 loop={false}            
-                apiKey={'AIzaSyBJ3ntReiv0L19H2RoYW62LpRdIuyPhIpw'}
+                apiKey={this.props.navigation.state.params.apiKey}
                 onReady={e => this.setState({ isReady: true })}
                 onChangeState={e => this.setState({ status: e.state })}
                 onChangeQuality={e => this.setState({ quality: e.quality })}
