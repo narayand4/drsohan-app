@@ -9,15 +9,18 @@ import {
   View,
   Button,
   Linking,
-  ActivityIndicator 
+  ActivityIndicator ,
+  TouchableWithoutFeedback,
+  Dimensions,
+  Modal
 } from 'react-native'
 import { StackNavigator } from 'react-navigation'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import Icons from 'react-native-vector-icons/MaterialCommunityIcons'
-import Gallery from 'react-native-image-gallery';
+import ImageElement from './ImageElement'
 
 let page = 0;
-let pageCount = 20;
+let pageCount = 10;
 export default class ImageGallery extends React.Component{
     static navigationOptions = {
         headerTitle: 'PROF.(DR.) SOHAN RAJ TATER E-KNOWLEDGE MUSEUM',
@@ -33,11 +36,18 @@ export default class ImageGallery extends React.Component{
     constructor(props){
         super(props)
         this.state = {
-          data: null,
+          modalVisible: false,
+          modalImage: require('../images/drsohan.jpg'),
+          images: null,
           nextPageNo: 0,
           prevPageNo: 0,
           rowLength: 0
         }
+    }
+
+    setModalVisible(visible, imageKey){
+      this.setState({modalVisible: visible});
+      this.setState({modalImage: this.state.images[imageKey]});
     }
 
     componentDidMount(){
@@ -59,7 +69,7 @@ export default class ImageGallery extends React.Component{
             data.push(item)
           })
           this.setState({
-            data: data,
+            images: data,
             rowLength: data.length,
             nextPageNo: (this.props.navigation.state.params && this.props.navigation.state.params.page) ? (this.props.navigation.state.params.page+1) : 1,
             prevPageNo: (this.props.navigation.state.params && this.props.navigation.state.params.page) ? (this.props.navigation.state.params.page-1) : 0
@@ -72,7 +82,7 @@ export default class ImageGallery extends React.Component{
 
     render() {
         const {navigate} = this.props.navigation
-        if (!this.state.data) {
+        if (!this.state.images) {
           return (
             <ActivityIndicator
               animating={true}
@@ -81,6 +91,16 @@ export default class ImageGallery extends React.Component{
             />
           );
         }
+
+        let images = this.state.images.map((val, key) => {
+          return <TouchableWithoutFeedback key={key} style={styles.imageContainer}
+                    onPress={() => {this.setModalVisible(true, key)}}>
+                        <View style={styles.imageWrap}>
+                            <ImageElement imgSource={val}></ImageElement>
+                        </View>
+                </TouchableWithoutFeedback>
+        });
+
         return (
           <View style={styles.container}>
             <ScrollView>
@@ -95,10 +115,26 @@ export default class ImageGallery extends React.Component{
                             <Text style={styles.vidText}>Click for View Old Images</Text>
                         </View>
                     </TouchableHighlight> 
-                    <Gallery
-                      style={{ flex: 1, backgroundColor: '#fff', width: 320, height: 400 }}
-                      images={this.state.data}
-                    />
+                    {images}
+                    <View style={styles.tabBar}>
+                        {this.state.nextPageNo>1 &&
+                            <TouchableHighlight key="previous" style={styles.tabItems}> 
+                                    <Text style={styles.tabTitleTW} onPress={() => navigate('ImageGallery', {
+                                        page: this.state.prevPageNo
+                                        })}>Previous</Text>                                    
+                            </TouchableHighlight>
+                        }
+                        {this.state.nextPageNo>1 && this.state.rowLength==pageCount &&
+                            <Text style={styles.tabSpace}>    </Text>
+                        }
+                        {this.state.rowLength==pageCount && 
+                            <TouchableHighlight key="next" style={styles.tabItems}>                                    
+                                <Text style={styles.tabTitleTW} onPress={() => navigate('ImageGallery', {
+                                    page: this.state.nextPageNo
+                                    })}>Next</Text>
+                            </TouchableHighlight> 
+                        }
+                    </View>
                 </View>
             </ScrollView>
             <View style={styles.tabBar}>
@@ -112,17 +148,28 @@ export default class ImageGallery extends React.Component{
               </TouchableOpacity>          
             </View>
           </View>
-        )
+        );
     }
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff'
-    },
+   container: {
+    flex: 1,
+    backgroundColor: '#fff'
+   },
+   imageContainer: {
+    flex:1,
+    flexDirection: 'row',
+    flexWrap: 'wrap'    
+   },
+   imageWrap: {
+    margin: 2,
+    padding: 2,
+    height: (Dimensions.get('window').height/2),
+    width: 320,
+    backgroundColor: '#fff'
+   },
     body: {
-        flex: 1,
         backgroundColor: '#fff',
         alignItems: 'center',
         padding: 30

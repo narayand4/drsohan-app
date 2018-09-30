@@ -30,6 +30,13 @@ export default class EknowledgeMuseum extends React.Component{
           <View style={styles.container}>
             <ScrollView>
                 <View style={styles.body}>
+                    <TouchableHighlight key="drsohan">
+                        <View style={styles.vids2}>
+                            <Image 
+                                source={require('../images/drsohan.jpg')} 
+                                style={{width: 80, height: 80, borderRadius: 40}}/>
+                        </View>
+                    </TouchableHighlight>
                     <TouchableHighlight key="Homeek" onPress={() => navigate('Homeek')}>
                         <View style={styles.vids}>
                             <Text style={styles.vidText}>Home</Text>
@@ -125,6 +132,11 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         borderBottomWidth: 0.6,
         borderColor: '#aaa'
+    },
+    vids2: {
+        width: 320,
+        backgroundColor: '#fff',
+        alignItems: 'center'
     },
     vidItems: {
         flexDirection: 'row',
